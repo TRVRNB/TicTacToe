@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string.h> // for strcpy()
-#include <stdlib.h> // for srand() and abs(
-#include <time.h> // for time()
+#include <stdlib.h> // for abs()
 using std::cout, std::cin, std::flush, std::abs;
 // 9/23/25 Tic Tac Toe
 
@@ -88,12 +87,21 @@ char check_lines(Board &board){
   concatenate3(lines[7], board.a[2], board.b[1], board.c[0]); // a3 b2 c1
   // iterate over it to look for wins
   char win = ' ';
+  short empty_spaces = 0;
   for (int i = 0; i < 8; i++){
     char win1 = check_line(lines[i]);
     if (win1 != ' '){
       win = win1;
+    } else {
+      if ((lines[i][0] == '-') || (lines[i][1] == '-') || (lines[i][2] == '-')){
+	empty_spaces += 1;
+      }
     }
   }
+  if ((empty_spaces == 0) && (win == ' ')){
+    win = '-'; // tie symbol
+  }
+  
   return win;  
 }
 
@@ -104,10 +112,7 @@ int main(){
   while (running1){
       Board board;
       srand(time(0));
-      turn = rand(); // start as a random player
-      turn %= 2; // i have never found a use for the %= operator before
-      turn = abs(turn); // it was creating negative numbers otherwise. i think it's because i used a short for turn, so the int was overflowing
-      // inner main loop
+      turn = 1; // start as white
       bool running = true;
       while (running){
 	// main loop
@@ -155,9 +160,14 @@ int main(){
 	char win = check_lines(board);
 	// check for winner
 	if (win != ' '){
-	  cout << "\n";
-	  cout << win << " wins!\n";
-	  ttt::wins[turn] += 1; // assuming the player who just moved won
+	  if (win == '-'){
+	    cout << '\n';
+	    cout << "Tie game.\n" << flush;
+	  } else {
+	    cout << '\n';
+	    cout << win << " wins!\n";
+	    ttt::wins[turn] += 1; // assuming the player who just moved won
+	  }
 	  cout << "Wins:\t";
 	  cout << ttt::chars[0] << ": " << ttt::wins[0] << "\t";
 	  cout << ttt::chars[1] << ": " << ttt::wins[1] << "\n" << flush;
