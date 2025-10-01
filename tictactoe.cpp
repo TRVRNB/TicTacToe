@@ -1,7 +1,14 @@
 #include <iostream>
 #include <cstring>
+using std::cout, std::cin, std::flush;
 // 9/23/25 Tic Tac Toe
 
+namespace ttt {
+  // tic tac toe namespace
+  // do these count as global variables? i don't think they would because other programs aren't going to be using this namespace
+  const char empty[4] = "   "; // used for emptying a char array easily
+  // add ttt chars
+}
 
 struct Board {
   // they need to be 4 long for /0
@@ -14,24 +21,24 @@ struct Board {
 void print_line(char* line){
   // prints out a line of tic tac toe
   for (int i = 0; i < 3; i++){
-    std::cout << ' ' << line[i];
+    cout << ' ' << line[i];
   }
-  std::cout << "\n" << std::flush;
+  cout << "\n" << std::flush;
   return;
 }
 
 void print_board(Board &board){
   // prints the board and its coordinates
-  std::cout << "  1 2 3 \n";
+  cout << "  1 2 3 \n";
   
   char* a = board.a;
-  std::cout << "a";
+  cout << "a";
   print_line(a);
   char* b = board.b;
-  std::cout << "b";
+  cout << "b";
   print_line(b);
   char* c = board.c;
-  std::cout << "c";
+  cout << "c";
   print_line(c);
   
   return;
@@ -51,36 +58,40 @@ char check_line(char* line){
 
 void concatenate3(char* text, char x1, char x2, char x3){
   // makes concatination in check_lines easier
-  std::cout << text;
   text[0], text[1], text[2] = x1, x2, x3;
-  std::cout << text;
   return;
 }
 
 char check_lines(Board &board){
   // runs check_line for every possible line
   char lines[8][4]; // array of char arrays, each representing a line
+
+  // this char array needs to be blank, for some reason the intial values in memory mess it up
+  for (int i = 0; i < 8; i++){
+    strcpy(lines[i], ttt::empty);
+  }
+
+
   concatenate3(lines[0], board.a[0], board.a[1], board.a[2]);
-  std::cout << lines[0];
   return 'a';  
 }
 
 int main(){
   Board board;
-  std::cout << "O goes first.";
+  cout << "O goes first.";
   short turn = 0;
   
   bool running = true;
   while (running){
     // main loop
-    std::cout << '\n';
-    char turnchars[3] = "OX";
+    cout << '\n';
+    char turnchars[3] = "OX"; // theoretically, you could change the ascii codes used in tictactoe
     print_board(board);
     
     bool valid = false;
-    while (not valid){
+    while (!valid){
       char input[3];
-      std::cin >> input;
+      cin >> input;
       valid = true; // assume it is true, unless the default case runs
       char turn_char = turnchars[turn];
       int num = input[1] - '0' - 1;// apparently this works because the digits are sorted in ascii
@@ -88,7 +99,7 @@ int main(){
       switch (input[0]){
       case 'a':
 	if (board.a[num] != '-'){
-	    std::cout << "Invalid placement.\n";
+	  cout << "Invalid placement.\n"; // i need to repeat this 3 times, which is another reason a map might've worked better
 	    valid = false;
 	    break;
 	  }
@@ -96,7 +107,7 @@ int main(){
 	break;
       case 'b':
 	if (board.b[num] != '-'){
-	    std::cout << "Invalid placement.\n";
+	    cout << "Invalid placement.\n";
 	    valid = false;
 	    break;
 	  }
@@ -104,14 +115,14 @@ int main(){
 	break;
       case 'c':
 	if (board.c[num] != '-'){
-	    std::cout << "Invalid placement.\n";
+	    cout << "Invalid placement.\n";
 	    valid = false;
 	    break;
 	  }
 	board.c[num] = turn_char;
 	break;
       default: // repeat this input
-	std::cout << "Try: a1, b2, c1, a3\n" << std::flush;
+	cout << "Try: a1, b2, c1, a3\n" << flush;
 	valid = false;
       }
     }
